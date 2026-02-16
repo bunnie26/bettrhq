@@ -1,7 +1,7 @@
 /**
  * Task list with status badges and minimal animations.
+ * List load errors shown inline only (no toast) to avoid duplicate signals.
  */
-import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useTasks, useUpdateTask, useDeleteTask } from "../hooks/useTasks.js";
 
@@ -21,10 +21,6 @@ function TaskList() {
   const { data: tasks = [], isLoading, error } = useTasks();
   const updateTask = useUpdateTask();
   const deleteTask = useDeleteTask();
-
-  useEffect(() => {
-    if (error) toast.error(error.message || "Failed to load tasks");
-  }, [error]);
 
   if (isLoading) {
     return (

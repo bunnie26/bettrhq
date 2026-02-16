@@ -68,3 +68,48 @@ def test_create_task_validation_failure(client):
     assert "error" in r.get_json()
     r2 = client.post("/api/tasks", json={}, content_type="application/json")
     assert r2.status_code == 400
+
+
+def test_update_task(client):
+    """PATCH /api/tasks/:id updates task and returns 200."""
+    r = client.post("/api/tasks", json={"title": "Update me"}, content_type="application/json")
+    assert r.status_code == 201
+    task_id = r.get_json()["id"]
+    r2 = client.patch(
+        f"/api/tasks/{task_id}",
+        json={"status": "in_progress"},
+        content_type="application/json",
+    )
+    assert r2.status_code == 200
+    assert r2.get_json()["status"] == "in_progress"
+    r3 = client.get("/api/tasks")
+    assert r3.get_json()[0]["status"] == "in_progress"
+
+
+def test_delete_task(client):
+    """DELETE /api/tasks/:id returns 204 and removes task."""
+    r = client.post("/api/tasks", json={"title": "Delete me"}, content_type="application/json")
+    assert r.status_code == 201
+    task_id = r.get_json()["id"]
+    r2 = client.delete(f"/api/tasks/{task_id}")
+    assert r2.status_code == 204
+    r3 = client.get("/api/tasks")
+    assert len(r3.get_json()) == 0
+
+
+def test_update_task_not_found(client):
+    """PATCH /api/tasks/:id with non-existent id returns 404."""
+    r = client.patch(
+        "/api/tasks/99999",
+        json={"status": "done"},
+        content_type="application/json",
+    )
+    assert r.status_code == 404
+    assert r.get_json().get("error") == "Task not found"
+
+
+def test_delete_task_not_found(client):
+    """DELETE /api/tasks/:id with non-existent id returns 404."""
+    r = client.delete("/api/tasks/99999")
+    assert r.status_code == 404
+    assert r.get_json().get("error") == "Task not found"

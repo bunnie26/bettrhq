@@ -27,6 +27,7 @@ def create_app():
         "DATABASE_URI", "sqlite:///task_manager.sqlite"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["DEBUG"] = os.environ.get("FLASK_DEBUG", "0").lower() in ("1", "true")
 
     db.init_app(app)
 

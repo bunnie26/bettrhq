@@ -1,11 +1,16 @@
 /**
  * App shell. Minimal layout with centered content.
+ * taskFormOpenAtom (Jotai) controls whether the add-task form is visible.
  */
+import { useAtom } from "jotai";
 import { Toaster } from "react-hot-toast";
+import { taskFormOpenAtom } from "./atoms/tasksAtoms.js";
 import TaskForm from "./components/TaskForm.jsx";
 import TaskList from "./components/TaskList.jsx";
 
 function App() {
+  const [taskFormOpen, setTaskFormOpen] = useAtom(taskFormOpenAtom);
+
   return (
     <div className="min-h-screen bg-slate-50 font-sans antialiased">
       <Toaster
@@ -27,7 +32,26 @@ function App() {
         <h1 className="mb-8 text-2xl font-semibold tracking-tight text-slate-800 sm:text-3xl">
           Task Manager
         </h1>
-        <TaskForm />
+        {taskFormOpen ? (
+          <>
+            <TaskForm />
+            <button
+              type="button"
+              onClick={() => setTaskFormOpen(false)}
+              className="mb-6 text-sm text-slate-500 hover:text-slate-700"
+            >
+              Cancel
+            </button>
+          </>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setTaskFormOpen(true)}
+            className="mb-8 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >
+            Add task
+          </button>
+        )}
         <TaskList />
       </main>
     </div>

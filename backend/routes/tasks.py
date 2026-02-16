@@ -55,7 +55,7 @@ def create_task():
 def update_task(task_id):
     """PATCH /api/tasks/:id — update task. Validates body."""
     try:
-        task = Task.query.get(task_id)
+        task = db.session.get(Task, task_id)
         if not task:
             return jsonify({"error": "Task not found"}), 404
         payload = request.get_json(silent=True)
@@ -82,7 +82,7 @@ def update_task(task_id):
 def delete_task(task_id):
     """DELETE /api/tasks/:id — delete a task."""
     try:
-        task = Task.query.get(task_id)
+        task = db.session.get(Task, task_id)
         if not task:
             return jsonify({"error": "Task not found"}), 404
         db.session.delete(task)
