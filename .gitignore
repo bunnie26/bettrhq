@@ -1,0 +1,4 @@
+.env
+*.sqlite
+backend/.venv/
+frontend/node_modules/
